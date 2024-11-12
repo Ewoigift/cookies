@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized Welcome</title>
+    <style>
+        /* Main color palette */
+        :root {
+            --background: #071739;       /* Dark Navy */
+            --primary: #4B6382;          /* Slate Blue */
+            --secondary: #A4B5C4;        /* Light Gray-Blue */
+            --highlight: #FFD700;        /* Gold for accents */
+            --text-light: #FFFFFF;       /* White text */
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text-light);
+            font-family: Tahoma, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--highlight);
+            font-size: 36px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px var(--primary);
+        }
+
+        .welcome-message {
+            background: var(--primary);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .welcome-message p {
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        hr {
+            border: 1px solid var(--highlight);
+            width: 80%;
+            margin: 20px auto;
+        }
+
+        a {
+            color: var(--highlight);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:visited {
+            color: var(--secondary);
+        }
+
+        /* Custom prompt modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal {
+            background: var(--primary);
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+            color: var(--text-light);
+        }
+
+        .modal input[type="text"] {
+            width: 90%;
+            padding: 8px;
+            border-radius: 4px;
+            border: none;
+            margin-top: 10px;
+        }
+
+        .modal button {
+            background: var(--highlight);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            color: var(--background);
+            font-weight: bold;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+
+        .modal button:hover {
+            background: #e6b800;
+        }
+    </style>
+    <script>
+        function setCookie(c_name, value, expiredays) {
+            var exdate = new Date();
+            exdate.setDate(exdate.getDate() + expiredays);
+            document.cookie = c_name + "=" + escape(value) +
+                ((expiredays == null) ? "" : ";expires=" + exdate.toGMTString());
+        }
+
+        function getCookie(c_name) {
+            if (document.cookie.length > 0) {
+                var c_start = document.cookie.indexOf(c_name + "=");
+                if (c_start != -1) {
+                    c_start = c_start + c_name.length + 1;
+                    var c_end = document.cookie.indexOf(";", c_start);
+                    if (c_end == -1) c_end = document.cookie.length;
+                    return unescape(document.cookie.substring(c_start, c_end));
+                }
+            }
+            return "";
+        }
+
+        function openModal() {
+            document.querySelector('.modal-overlay').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.querySelector('.modal-overlay').style.display = 'none';
+        }
+
+        function checkCookie() {
+            var username = getCookie('username');
+            var lastVisit = getCookie('lastVisit');
+            var now = new Date();
+            var lastVisitDate = now.toDateString() + " " + now.toLocaleTimeString();
+
+            if (username) {
+                document.getElementById("welcomeText").innerText = 
+                    `Welcome back, ${username}! Your last visit was on ${lastVisit}.`;
+                setCookie('lastVisit', lastVisitDate, 365);
+            } else {
+                openModal();
+            }
+        }
+
+        function saveName() {
+            var username = document.getElementById('nameInput').value;
+            if (username) {
+                var now = new Date();
+                var lastVisitDate = now.toDateString() + " " + now.toLocaleTimeString();
+                setCookie('username', username, 365);
+                setCookie('lastVisit', lastVisitDate, 365);
+                document.getElementById("welcomeText").innerText = 
+                    `Welcome, ${username}! We're glad to have you here for the first time!`;
+                closeModal();
+            }
+        }
+    </script>
+</head>
+<body onload="checkCookie()">
+    <div class="welcome-message">
+        <h1>Welcome to Our Site!</h1>
+        <p id="welcomeText">Loading personalized message...</p>
+    </div>
+    <hr>
+    <p><a href="#">Explore More</a></p>
+
+    <!-- Custom Modal -->
+    <div class="modal-overlay">
+        <div class="modal">
+            <h2>Hello! What's your name?</h2>
+            <input type="text" id="nameInput" placeholder="Enter your name">
+            <button onclick="saveName()">Submit</button>
+        </div>
+    </div>
+</body>
+</html>
